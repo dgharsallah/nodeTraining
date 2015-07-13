@@ -98,6 +98,11 @@ module.exports.routes = {
   'post /event/subscribe': { // for testing purposes
     controller: 'EventController',
     action: 'subscribeUser'
+  },
+
+  'get /event/findById': {
+    controller: 'EventController',
+    action: 'findById'
   }
 
 

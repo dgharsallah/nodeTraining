@@ -9,12 +9,12 @@ var Q = require('q');
 module.exports = {
 
   attributes: {
-    eventId: {
-      type: 'integer',
-      //     required: true,
-      primaryKey: true,
-      unique: true
-    },
+    //eventId: {
+    //  type: 'integer',
+    //  //     required: true,
+    //  primaryKey: true,
+    //  unique: true
+    //},
     title: {
       type: 'string',
       defaultsTo: ''
