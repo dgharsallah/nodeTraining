@@ -5,29 +5,29 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 //var async = require('async');
-var ObjectID = require('mongodb').ObjectID;
+var ObjectId = require('mongodb').ObjectId;
 
 module.exports = {
 
   subscribeUser: function (req, res) {
     var email = req.param('email');
-    token = Math.random().toString(36).substr(2,8);
+    token = Math.random().toString(36).substr(2, 8);
     console.log('#EventController.subscribeUser with param email :' + email);
     User.findOne({"facebook.email": email}, function userFound(err, userFound) {
       if (err)
         throw err;
       console.log('User found ' + userFound);
-        if (!userFound)
-          res.send('No user found with such email');
-        else {
-          User.update({"facebook.email": email}, {token: token}, function userUpdated(err, userUpdated) {
-            if (err)
-              throw err;
-            console.log('user after subscription ' + userUpdated);
-            EmailService.sendEmail(email, token);
-            res.send('finished sending mail');
-          });
-        }
+      if (!userFound)
+        res.send('No user found with such email');
+      else {
+        User.update({"facebook.email": email}, {token: token}, function userUpdated(err, userUpdated) {
+          if (err)
+            throw err;
+          console.log('user after subscription ' + userUpdated);
+          EmailService.sendEmail(email, token);
+          res.send('finished sending mail');
+        });
+      }
     });
   },
 
@@ -40,7 +40,7 @@ module.exports = {
         throw err;
       console.log('User found ' + user);
       if (user) {
-        User.update({token: token}, {token: '+'}, function userUpdated (err, user) {
+        User.update({token: token}, {token: '+'}, function userUpdated(err, user) {
           console.log('the token of the user is ' + user.token);
           console.log('user : ' + user);
           if (err)
@@ -54,23 +54,23 @@ module.exports = {
   },
 
   //CRUD
-  create : function (req, res) { // needs to be authentificated
+  create: function (req, res) { // needs to be authentificated
     console.log('#EventController.create');
-    var event =  {};
+    var event = {};
     event.title = req.param('title');
     event.description = req.param('description');
     event.address = req.param('address');
     var lat = req.param('lat');
     var lng = req.param('lng');
-    var location = {latitude : lat, longitude : lng};
+    var location = {latitude: lat, longitude: lng};
     event.location = location;
     event.type = req.param('type');
- //   event.owner = req.user; // TODO : to check later
+    //   event.owner = req.user; // TODO : to check later
     Event
       .addNew(event)
       .then(function (createdEvent) {
         console.log('Created event ' + createdEvent);
-        return res.send({event : createdEvent});
+        return res.send({event: createdEvent});
       })
       .catch(function (err) {
         console.log('Error when adding new event ' + err);
@@ -78,7 +78,7 @@ module.exports = {
       });
   },
 
-  update : function (req, res) {
+  update: function (req, res) {
     console.log('# EventController ');
     console.log('req.params : ' + req.param);
     var newEvent = {};
@@ -89,14 +89,14 @@ module.exports = {
     location.latitude = req.param('lat');
     location.longitude = req.param('lng');
     newEvent.location = location;
-    newEvent.id = new ObjectID(req.param('id'));
+    newEvent.id = req.param('id');
     newEvent.type = req.param('type');
     console.log('will try to look ');
     Event
-      .update({_id : newEvent.id}, newEvent)
+      .update({_id: newEvent.id}, newEvent)
       .then(function (updatedEvent) {
         console.log('Has updated event ' + updatedEvent);
-        return res.send({event : updatedEvent});
+        return res.send({event: updatedEvent});
       })
       .catch(function (err) {
         console.log('Error when updating event ' + err);
@@ -104,11 +104,11 @@ module.exports = {
       });
   },
 
-  delete : function (req, res) {
+  delete: function (req, res) {
     var id = req.param('id');
     Event
-      .destroy({eventId : id})
-      .then(function (deletedEvent){
+      .destroy({id: id})
+      .then(function (deletedEvent) {
         console.log('Deleted event : ' + deletedEvent);
         return res.send('Event deleted');
       })
@@ -132,13 +132,14 @@ module.exports = {
       });
   },
 
-  findById: function (req, res) {
+  findOne: function (req, res) {
+    console.log('#EventController.findById');
     var id = req.param('id');
-    console.log('#EventController.findById with id : ' + id);
+    console.log('id is : ' + id);
     Event
       .findOne({id: id})
       .then(function (event) {
-        console.log('+ found event ' + event);
+        console.log('+ event found ' + event);
         return res.send({event: event});
       })
       .catch(function (err) {
@@ -147,7 +148,7 @@ module.exports = {
       })
   },
 
-  registerUsersToEvent : function (req, res) {
+  registerUsersToEvent: function (req, res) {
     var eventId = req.param('eventId');
     var usersIds = req.param('usersIds');
     var _id = new ObjectID(eventId);

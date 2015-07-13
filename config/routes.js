@@ -100,9 +100,9 @@ module.exports.routes = {
     action: 'subscribeUser'
   },
 
-  'get /event/findById': {
+  'post /event/findOne': {
     controller: 'EventController',
-    action: 'findById'
+    action: 'findOne'
   }
 
 
