@@ -79,23 +79,21 @@ module.exports = {
   },
 
   update: function (req, res) {
-    console.log('# EventController ');
-    console.log('req.params : ' + req.param);
-    var newEvent = {};
-    newEvent.title = req.param('title');
-    newEvent.description = req.param('description');
-    newEvent.address = req.param('address');
-    var location = {};
-    location.latitude = req.param('lat');
-    location.longitude = req.param('lng');
-    newEvent.location = location;
-    newEvent.id = req.param('id');
-    newEvent.type = req.param('type');
-    console.log('will try to look ');
+    var event = {};
+    for (var prop in req.body) {
+      //console.log('Key : ' + prop);
+      //console.log('Value : ' + req.body[prop]);
+      event[prop] = req.body[prop];
+    }
+    //console.log('New event to update ');
+//    console.log(event);
+    var id = req.param('id');
+    console.log('#EventController with id ' + id);
     Event
-      .update({_id: newEvent.id}, newEvent)
+      .update({id: id}, event)
       .then(function (updatedEvent) {
-        console.log('Has updated event ' + updatedEvent);
+        console.log('Has updated event ');
+        console.log(updatedEvent);
         return res.send({event: updatedEvent});
       })
       .catch(function (err) {
